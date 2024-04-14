@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1006167300876",
+    "project_id": "ohinai-4d90a",
+    "storage_bucket": "ohinai-4d90a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006167300876:android:a2b03761a30637ddb28729",
+        "android_client_info": {
+          "package_name": "com.example.whichIs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9v2ekldHH4xfSsoRyyfX_wvzCtgl8B8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

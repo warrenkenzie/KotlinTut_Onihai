@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">whichIs</string>
+    <string name="welcomeTitle_1">Welcome To Ohinai</string>
+    <string name="welcomeTitle_2">Ohinai</string>
+    <string name="startGameBtn">Start Game</string>
+    <string name="contentDesc">image</string>
+</resources>
