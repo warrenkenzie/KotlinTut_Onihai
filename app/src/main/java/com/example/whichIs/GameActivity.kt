@@ -3,21 +3,17 @@ package com.example.whichIs
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.whichIs.adapter.GameAdapter
 import com.example.whichIs.model.Quiz
 import com.example.whichIs.model.QuizImage
-import java.text.FieldPosition
 
 class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
@@ -41,15 +37,13 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
         recyclerViewGame = findViewById(R.id.game_RV)
         val mAdapter = GameAdapter(quizList)
-        val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL,false)
+        val mLayoutManager = LinearLayoutManager(this,RecyclerView.HORIZONTAL,false)
+
         // Set the layout manager and adapter on the RecyclerView
         recyclerViewGame.layoutManager = mLayoutManager
         recyclerViewGame.adapter = mAdapter
         mAdapter.setOnItemClickListener(this)
-        recyclerViewGame.isNestedScrollingEnabled = false
         LinearSnapHelper().attachToRecyclerView(recyclerViewGame)
-        // (Optional) Set a default item animator for animations (optional)
-        recyclerViewGame.itemAnimator = DefaultItemAnimator()
 
         recyclerViewGame.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -59,12 +53,11 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
                 if (visibleItemPosition != RecyclerView.NO_POSITION) {
                     // An item is fully visible, start the timer
-                    startTimer(5000,recyclerView)
+                    startTimer(5000)
                 }
             }
         })
     }
-
 
     private fun initialiseList() : ArrayList<Quiz>{
         val quiz0 = Quiz(
@@ -91,7 +84,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         return quizList
     }
 
-    fun startTimer(durationMillis: Long, recyclerView: RecyclerView) {
+    fun startTimer(durationMillis: Long) {
         timer?.cancel() // Cancel any existing timer
 
         timer = object : CountDownTimer(durationMillis, 1000) {
@@ -103,25 +96,15 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
             }
 
             override fun onFinish() {
-                nextTurn(recyclerView,-1)
+                nextTurn(-1)
             }
         }.start()
     }
 
-    private fun quizEnds(userAnswer:Int){
-        if (userAnswer == 0 || userAnswer == 1){
-            timer?.cancel() // Cancel any existing timer
-            nextTurn(recyclerViewGame,userAnswer)
-
-        }else if(userAnswer == -1){
-
-        }
-    }
-
     // check if there is a next turn, if there is a turn after the current turn, return the nextItemPosition
     // if its -1, then there is not next turn and its the final quiz
-    fun nextTurn(recyclerView: RecyclerView,userAnswer: Int) {
-        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+    fun nextTurn(userAnswer: Int) {
+        val layoutManager = recyclerViewGame.layoutManager as LinearLayoutManager
         val currentItemPosition = layoutManager.findFirstVisibleItemPosition()
         val nextItemPosition = currentItemPosition + 1
 
@@ -140,9 +123,9 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         }
 
         // if there is a next quiz then proceed, if not then go to the results page
-        if (nextItemPosition < (recyclerView.adapter?.itemCount ?: 0)) {
+        if (nextItemPosition < (recyclerViewGame.adapter?.itemCount ?: 0)) {
             timer?.cancel() // Cancel any existing timer
-            recyclerView.smoothScrollToPosition(nextItemPosition)
+            recyclerViewGame.smoothScrollToPosition(nextItemPosition)
         }else{
             val intent = Intent(this, EndScreenActivity::class.java)
             intent.putExtra("correctCount", correctCount.toString())
@@ -153,6 +136,6 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(userAnswer: Int) {
-        nextTurn(recyclerViewGame,userAnswer)
+        nextTurn(userAnswer)
     }
 }
