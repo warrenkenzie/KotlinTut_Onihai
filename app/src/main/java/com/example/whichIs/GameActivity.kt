@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.whichIs.adapter.GameAdapter
+import com.example.whichIs.model.Game
 import com.example.whichIs.model.Quiz
 import com.example.whichIs.model.QuizImage
 
@@ -20,6 +21,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
     private var timer: CountDownTimer? = null
     private lateinit var recyclerViewGame: RecyclerView
     private val quizList : ArrayList<Quiz> = initialiseList()
+    private var game : Game = Game(quizList,5000)
 
     private var correctCount: Int=0
     private var wrongCount: Int=0
@@ -36,7 +38,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         }
 
         recyclerViewGame = findViewById(R.id.game_RV)
-        val mAdapter = GameAdapter(quizList)
+        val mAdapter = GameAdapter(game.quizList)
         val mLayoutManager = LinearLayoutManager(this,RecyclerView.HORIZONTAL,false)
 
         // Set the layout manager and adapter on the RecyclerView
@@ -53,7 +55,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
                 if (visibleItemPosition != RecyclerView.NO_POSITION) {
                     // An item is fully visible, start the timer
-                    startTimer(5000)
+                    startTimer(game.timeForEachQuiz)
                 }
             }
         })

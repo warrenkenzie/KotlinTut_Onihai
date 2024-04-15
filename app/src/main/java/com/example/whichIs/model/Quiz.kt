@@ -4,5 +4,5 @@ data class Quiz(
     val imageUrlAnswer: ArrayList<QuizImage>,
     val answerPosition: Int,
     val answerType: String,
-    val prompt: String
+    val prompt: String,
 )
