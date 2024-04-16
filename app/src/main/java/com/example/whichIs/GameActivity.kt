@@ -3,25 +3,35 @@ package com.example.whichIs
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.renderscript.ScriptGroup.Binding
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.get
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.whichIs.ViewModel.GameViewModel
 import com.example.whichIs.adapter.GameAdapter
+import com.example.whichIs.databinding.ActivityGameBinding
 import com.example.whichIs.model.Game
 import com.example.whichIs.model.Quiz
-import com.example.whichIs.model.QuizImage
 
 class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
+    private val gameViewModel: GameViewModel by viewModels()
+    private lateinit var binding: ActivityGameBinding
+    private var turnCount: Int = 0
 
     private var timer: CountDownTimer? = null
     private lateinit var recyclerViewGame: RecyclerView
-    private val quizList : ArrayList<Quiz> = initialiseList()
-    private var game : Game = Game(quizList,5000)
+
+    private lateinit var game : Game
 
     private var correctCount: Int=0
     private var wrongCount: Int=0
@@ -30,14 +40,17 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_game)
+        binding = DataBindingUtil.setContentView<ActivityGameBinding>(this, R.layout.activity_game)
+        setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        recyclerViewGame = findViewById(R.id.game_RV)
+        game = gameViewModel.getGameData()
+        recyclerViewGame = binding.gameRV
         val mAdapter = GameAdapter(game.quizList)
         val mLayoutManager = LinearLayoutManager(this,RecyclerView.HORIZONTAL,false)
 
@@ -61,7 +74,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         })
     }
 
-    private fun initialiseList() : ArrayList<Quiz>{
+    /* private fun initialiseList() : ArrayList<Quiz>{
         val quiz0 = Quiz(
             ArrayList(listOf(
             QuizImage("https://firebasestorage.googleapis.com/v0/b/ohinai-4d90a.appspot.com/o/dog.jpeg?alt=media&token=71ad9cf2-32c7-4f2b-a20f-4e908fbebef3","2"),
@@ -85,16 +98,19 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         quizList.add(quiz2)
         return quizList
     }
-
+    */
     fun startTimer(durationMillis: Long) {
         timer?.cancel() // Cancel any existing timer
 
         timer = object : CountDownTimer(durationMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 // Update UI with remaining time
+                val layoutManager = recyclerViewGame.layoutManager as LinearLayoutManager
+                val currentItemPosition = layoutManager.findFirstVisibleItemPosition()
                 val secondsRemaining = millisUntilFinished / 1000
-                val timer : TextView = findViewById(R.id.timer)
-                timer.text = secondsRemaining.toString()
+                Log.w("time",currentItemPosition.toString())
+                val timer = recyclerViewGame.findViewHolderForAdapterPosition(turnCount)?.itemView?.findViewById<TextView>(R.id.timer)
+                timer?.text = secondsRemaining.toString()
             }
 
             override fun onFinish() {
@@ -113,7 +129,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         // check if answer is correct
         if (userAnswer == 0 || userAnswer == 1){
 
-            if(userAnswer == quizList[currentItemPosition].answerPosition){
+            if(userAnswer == game.quizList[currentItemPosition].answerPosition){
                 // answer is correct
                 correctCount += 1
             }else{
@@ -128,6 +144,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
         if (nextItemPosition < (recyclerViewGame.adapter?.itemCount ?: 0)) {
             timer?.cancel() // Cancel any existing timer
             recyclerViewGame.smoothScrollToPosition(nextItemPosition)
+            turnCount += 1
         }else{
             val intent = Intent(this, EndScreenActivity::class.java)
             intent.putExtra("correctCount", correctCount.toString())

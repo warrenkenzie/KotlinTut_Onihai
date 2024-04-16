@@ -33,6 +33,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    dataBinding {
+        enable = true
+    }
 }
 
 dependencies {
@@ -42,8 +46,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.activity:activity-ktx:1.8.2")
 }

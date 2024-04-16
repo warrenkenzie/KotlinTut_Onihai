@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".GameActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.example.whichIs.NoManualScrollingRecyclerView
-        android:id="@+id/game_RV"
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        tools:context=".GameActivity">
+
+        <com.example.whichIs.NoManualScrollingRecyclerView
+            android:id="@+id/game_RV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="1dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
