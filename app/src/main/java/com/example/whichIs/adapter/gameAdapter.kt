@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.request.RequestOptions
 import com.example.whichIs.R
+import com.example.whichIs.model.Game
 import com.example.whichIs.model.Quiz
 
 class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<GameAdapter.ViewHolder>() {
@@ -24,7 +25,10 @@ class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<Gam
             itemView.findViewById(R.id.bottom_image)
         }
         val timer = itemView.findViewById<TextView>(R.id.timer)
-
+        fun setTimerText(timerText: String) {
+            // Set the timer text
+            timer.text = timerText
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,9 +47,9 @@ class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<Gam
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        
         val imagesUrl0 : String = array[position].imageUrlAnswer[0].imageUrl
         val imagesUrl1 : String = array[position].imageUrlAnswer[1].imageUrl
-        val timer : TextView = holder.timer
         val requestOptions= RequestOptions().transform(CenterInside())
 
         Glide.with(holder.imageCard0)
