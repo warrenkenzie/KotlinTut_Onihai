@@ -40,9 +40,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun trueIfThereAreStillQuizzes(): Boolean{
-        Log.w("getCurrent",getCurrentTurnCount().toString())
-        Log.w("size",game.quizList.size.toString())
-        return (getCurrentTurnCount() <= game.quizList.size)
+        return (getCurrentTurnCount() <= game.quizList.size-1)
     }
 
     private fun increaseTurnCount(){

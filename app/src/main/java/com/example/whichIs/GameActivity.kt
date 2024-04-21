@@ -3,6 +3,7 @@ package com.example.whichIs
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -28,6 +29,7 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
     private lateinit var gameAdapter:GameAdapter
     private var isSmoothScrolling:Boolean = false
     private lateinit var curtain:ImageView
+    private var itemClickable:Boolean = true
 
     private var timer: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,15 +59,18 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
         /* when a new turn starts restart the cycle */
         gameViewModel.turnCount.observe(this, Observer { newTurnCount ->
+            if(gameViewModel.getCurrentTurnCount() != 0){
+                curtain.visibility = View.VISIBLE
+                gameAdapter.setDisabled_Enabled(gameViewModel.getCurrentTurnCount(),false)
+                itemClickable = false
+            }
             if(!gameViewModel.trueIfThereAreStillQuizzes()){
                 val intent = Intent(this, EndScreenActivity::class.java)
                 startActivity(intent)
             }else{
-                if(gameViewModel.getCurrentTurnCount() != 0){
-                    curtain.visibility = View.VISIBLE
-                    gameAdapter.setDisabled_Enabled(gameViewModel.getCurrentTurnCount(),false)
-                }
                 recyclerViewGame.smoothScrollToPosition(gameViewModel.getCurrentTurnCount())
+                // Set the flag to true indicating that a smooth scroll is in progress
+                isSmoothScrolling = true
                 startTimer(gameViewModel.getGameData().timeForEachQuiz)
 
                 // Set a scroll listener to track the completion of smooth scroll
@@ -76,14 +81,13 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
                             // Smooth scroll has completed
                             recyclerView.removeOnScrollListener(this) // Remove the listener
                             isSmoothScrolling = false
+                            itemClickable = true
                             curtain.visibility = View.GONE
                             gameAdapter.setDisabled_Enabled(gameViewModel.getCurrentTurnCount(),true)
                             startTimer(gameViewModel.getGameData().timeForEachQuiz)
                         }
                     }
                 })
-                // Set the flag to true indicating that a smooth scroll is in progress
-                isSmoothScrolling = true
             }
         })
     }
@@ -105,6 +109,8 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(userAnswer: Int) {
-        gameViewModel.nextTurn(userAnswer)
+        if(itemClickable){
+            gameViewModel.nextTurn(userAnswer)
+        }
     }
 }
