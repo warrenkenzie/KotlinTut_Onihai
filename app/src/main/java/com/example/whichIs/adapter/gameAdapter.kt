@@ -16,6 +16,7 @@ import com.example.whichIs.model.Quiz
 class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<GameAdapter.ViewHolder>() {
 
     private var listener: OnItemClickListener? = null
+    private var clickDisabled = true
 
     class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         val imageCard0: ImageView by lazy {
@@ -25,10 +26,6 @@ class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<Gam
             itemView.findViewById(R.id.bottom_image)
         }
         val timer = itemView.findViewById<TextView>(R.id.timer)
-        fun setTimerText(timerText: String) {
-            // Set the timer text
-            timer.text = timerText
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -62,18 +59,23 @@ class GameAdapter(private val array : ArrayList<Quiz>): RecyclerView.Adapter<Gam
             .apply(requestOptions)
             .into(holder.imageCard1)
 
-        holder.imageCard0.setOnClickListener {
-            listener?.onItemClick(0)
+        if (this.clickDisabled){
+            holder.imageCard0.setOnClickListener {
+                listener?.onItemClick(0)
+            }
+            holder.imageCard1.setOnClickListener {
+                listener?.onItemClick(1)
+            }
         }
-        holder.imageCard1.setOnClickListener {
-            listener?.onItemClick(1)
-        }
+    }
 
-
+    fun setDisabled_Enabled(position: Int,disabledOrEnabled:Boolean){
+        this.clickDisabled = disabledOrEnabled
+        notifyItemChanged(position)
+        notifyItemChanged(position+1)
     }
 
     interface OnItemClickListener {
         fun onItemClick(userAnswer: Int)
-
     }
 }

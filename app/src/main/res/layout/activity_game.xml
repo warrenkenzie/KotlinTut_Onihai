@@ -19,5 +19,19 @@
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="1dp"
             tools:layout_editor_absoluteY="1dp" />
+
+        <ImageView
+            android:id="@+id/curtain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/traslucent_bg"
+            android:contentDescription="@string/contentDesc"
+            android:visibility="gone"/>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

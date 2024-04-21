@@ -39,6 +39,12 @@ class GameViewModel : ViewModel() {
         return turnCount.value?.toInt()!!
     }
 
+    fun trueIfThereAreStillQuizzes(): Boolean{
+        Log.w("getCurrent",getCurrentTurnCount().toString())
+        Log.w("size",game.quizList.size.toString())
+        return (getCurrentTurnCount() <= game.quizList.size)
+    }
+
     private fun increaseTurnCount(){
         _turnCount.value = _turnCount.value!!.plus(1)
         Log.w("INCREASE",_turnCount.value.toString())
@@ -48,8 +54,7 @@ class GameViewModel : ViewModel() {
     /* Returns Boolean value, if true, the game continues, if false its over */
     fun nextTurn(userAnswer: Int):Boolean {
         // if there is a next quiz then proceed, if not then go to the results page
-        Log.w("SDASDA",(getCurrentTurnCount() <= game.quizList.size).toString())
-        if (getCurrentTurnCount() <= game.quizList.size ) {
+        if (trueIfThereAreStillQuizzes()) {
             // check if answer is correct
             if (userAnswer == 0 || userAnswer == 1) {
                 if (userAnswer == game.quizList[getCurrentTurnCount()].answerPosition)

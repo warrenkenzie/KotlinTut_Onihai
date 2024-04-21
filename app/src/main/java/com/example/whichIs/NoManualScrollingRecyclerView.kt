@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import androidx.recyclerview.widget.RecyclerView
 
 class NoManualScrollingRecyclerView:RecyclerView {
+    private var touchEvents:Boolean = true
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
@@ -13,6 +14,12 @@ class NoManualScrollingRecyclerView:RecyclerView {
     override fun onTouchEvent(e: MotionEvent?): Boolean {
         // Consume touch events without allowing the RecyclerView to scroll
         return false
+    }
+    fun enableTouchEvents(){
+        touchEvents = true
+    }
+    fun disableTouchEvents(){
+        touchEvents = false
     }
 
 }
