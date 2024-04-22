@@ -59,6 +59,18 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
 
         /* when a new turn starts restart the cycle */
         gameViewModel.turnCount.observe(this, Observer { newTurnCount ->
+            gameViewModel.correctCount.observe(this, Observer { count ->
+                Log.w("correctCount",count.toString())
+            })
+
+            gameViewModel.wrongCount.observe(this, Observer { count ->
+                Log.w("wrongCount",count.toString())
+            })
+
+            gameViewModel.timeOutCount.observe(this, Observer { count ->
+                Log.w("timeOutCount",count.toString())
+            })
+
             if(gameViewModel.getCurrentTurnCount() != 0){
                 curtain.visibility = View.VISIBLE
                 gameAdapter.setDisabled_Enabled(gameViewModel.getCurrentTurnCount(),false)
@@ -66,6 +78,9 @@ class GameActivity : AppCompatActivity(), GameAdapter.OnItemClickListener {
             }
             if(!gameViewModel.trueIfThereAreStillQuizzes()){
                 val intent = Intent(this, EndScreenActivity::class.java)
+                intent.putExtra("correctCount", gameViewModel.getCorrectCount().toString())
+                intent.putExtra("wrongCount", gameViewModel.getWrongCount().toString())
+                intent.putExtra("timeOutCount", gameViewModel.getTimeOutCount().toString())
                 startActivity(intent)
             }else{
                 recyclerViewGame.smoothScrollToPosition(gameViewModel.getCurrentTurnCount())

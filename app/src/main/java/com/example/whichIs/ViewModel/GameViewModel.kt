@@ -23,13 +23,29 @@ class GameViewModel : ViewModel() {
     private var  game : Game = GameRepository().getGameData()
 
     /* Game Stats */
-    private var correctCount: Int=0
-    private var wrongCount: Int=0
-    private var timeOutCount: Int=0
+    private var _correctCount: MutableLiveData<Int> = MutableLiveData(0)
+    var correctCount: LiveData<Int> = _correctCount
+
+    private var _wrongCount: MutableLiveData<Int> = MutableLiveData(0)
+    var wrongCount: LiveData<Int> = _wrongCount
+
+    private var _timeOutCount: MutableLiveData<Int> = MutableLiveData(0)
+    var timeOutCount: LiveData<Int> = _timeOutCount
 
     // MutableLiveData for turnCount
     private var _turnCount: MutableLiveData<Int> = MutableLiveData(0)
     var turnCount: LiveData<Int> = _turnCount
+
+    fun getCorrectCount(): Int {
+        return correctCount.value?.toInt()!!
+    }
+    fun getWrongCount(): Int {
+        return wrongCount.value?.toInt()!!
+    }
+    fun getTimeOutCount(): Int {
+        return timeOutCount.value?.toInt()!!
+    }
+
 
     fun getGameData():Game{
         return game
@@ -56,12 +72,13 @@ class GameViewModel : ViewModel() {
             // check if answer is correct
             if (userAnswer == 0 || userAnswer == 1) {
                 if (userAnswer == game.quizList[getCurrentTurnCount()].answerPosition)
-                { correctCount += 1 }
+                { _correctCount.value = _correctCount.value?.plus(1)
+                }
                 else
-                { wrongCount += 1 }
+                { _wrongCount.value = _wrongCount.value?.plus(1) }
             } else if (userAnswer == -1) {
                 // when ran out of time
-                timeOutCount += 1
+                _timeOutCount.value = _timeOutCount.value?.plus(1)
             }
             increaseTurnCount()
             return true
