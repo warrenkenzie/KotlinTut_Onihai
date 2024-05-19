@@ -32,6 +32,10 @@ class GameViewModel : ViewModel() {
     private var _timeOutCount: MutableLiveData<Int> = MutableLiveData(0)
     var timeOutCount: LiveData<Int> = _timeOutCount
 
+    // 1 - answer was correct | 0 - answer was wrong | -1 - time out
+    private var _wasTheAnswerCorrect: MutableLiveData<Int> = MutableLiveData()
+    var wasTheAnswerCorrect: LiveData<Int> = _wasTheAnswerCorrect
+
     // MutableLiveData for turnCount
     private var _turnCount: MutableLiveData<Int> = MutableLiveData(0)
     var turnCount: LiveData<Int> = _turnCount
@@ -45,7 +49,6 @@ class GameViewModel : ViewModel() {
     fun getTimeOutCount(): Int {
         return timeOutCount.value?.toInt()!!
     }
-
 
     fun getGameData():Game{
         return game
@@ -61,7 +64,32 @@ class GameViewModel : ViewModel() {
 
     private fun increaseTurnCount(){
         _turnCount.value = _turnCount.value!!.plus(1)
-        Log.w("INCREASE",_turnCount.value.toString())
+    }
+
+    fun getQuestion(): String{
+        return game.quizList[_turnCount.value!!].prompt
+    }
+
+    fun getCurrentQuiz(): Quiz{
+        return game.quizList[_turnCount.value!! - 1]
+    }
+
+    fun getCurrentQuizAnswer(position:Int): String{
+        val picName = getCurrentQuiz().imageUrlAnswer[position].picName
+        val value = getCurrentQuiz().imageUrlAnswer[position].quizAnswer
+        val metric = getCurrentQuiz().answerType
+
+        return String.format("$picName => $value$metric")
+    }
+
+    // 1 - answer was correct | 0 - answer was wrong | -1 - time out
+    fun getWasAnswerCorrect(): String{
+        return when (_wasTheAnswerCorrect.value) {
+            1 -> "Correct"
+            0 -> "Wrong"
+            -1 -> "You had enough time..."
+            else -> "Error: 404"
+        }
     }
 
     /* There are 3 userAnswer, correct - 1 | wrong - 0 */
@@ -72,13 +100,19 @@ class GameViewModel : ViewModel() {
             // check if answer is correct
             if (userAnswer == 0 || userAnswer == 1) {
                 if (userAnswer == game.quizList[getCurrentTurnCount()].answerPosition)
-                { _correctCount.value = _correctCount.value?.plus(1)
+                {
+                    _correctCount.value = _correctCount.value?.plus(1)
+                    _wasTheAnswerCorrect.value = 1
                 }
                 else
-                { _wrongCount.value = _wrongCount.value?.plus(1) }
+                {
+                    _wrongCount.value = _wrongCount.value?.plus(1)
+                    _wasTheAnswerCorrect.value = 0
+                }
             } else if (userAnswer == -1) {
                 // when ran out of time
                 _timeOutCount.value = _timeOutCount.value?.plus(1)
+                _wasTheAnswerCorrect.value = -1
             }
             increaseTurnCount()
             return true
